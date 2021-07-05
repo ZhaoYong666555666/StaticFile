@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>瀑布流</title>
+    <script src="https://cdn.bootcss.com/jquery/2.1.0/jquery.min.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        .waterfall{
+            position: relative;
+            width: 100%;
+            height: 600px;
+        }
+        .waterfall img{
+            width:300px;
+            position: absolute;
+            margin:5px;
+            transition: all 0.5s;
+        }
+
+    </style>
+</head>
+<body>
+     <div class="waterfall">
+        
+        
+     </div>
+     <script>
+        const imageSrcData = [
+            "https://img2.baidu.com/it/u=304913868,2366181839&fm=26&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=1560692162,3853735145&fm=11&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=2813359854,1727909800&fm=26&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=1560692162,3853735145&fm=11&fmt=auto&gp=0.jpg",
+            "https://img2.baidu.com/it/u=282316753,2197441402&fm=26&fmt=auto&gp=0.jpg",
+            "https://img1.baidu.com/it/u=2260484435,901255640&fm=26&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=2425242412,3938231925&fm=26&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=1829500914,2095986246&fm=26&fmt=auto&gp=0.jpg",
+            "https://img2.baidu.com/it/u=2021175556,2651382398&fm=26&fmt=auto&gp=0.jpg",
+            "https://img1.baidu.com/it/u=2523658414,1890673399&fm=26&fmt=auto&gp=0.jpg",
+            "https://img1.baidu.com/it/u=3375371936,3815677167&fm=26&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=1630499593,3996380064&fm=26&fmt=auto&gp=0.jpg",
+            "https://img1.baidu.com/it/u=2793374383,372386997&fm=26&fmt=auto&gp=0.jpg",
+            "https://img1.baidu.com/it/u=365334746,1059411671&fm=26&fmt=auto&gp=0.jpg",
+            "https://img1.baidu.com/it/u=2618559225,3908415005&fm=26&fmt=auto&gp=0.jpg",
+            "https://img2.baidu.com/it/u=191171369,63886815&fm=26&fmt=auto&gp=0.jpg",
+            "https://img2.baidu.com/it/u=3955565658,2472724494&fm=26&fmt=auto&gp=0.jpg",
+            "https://img0.baidu.com/it/u=3838652683,1526022270&fm=26&fmt=auto&gp=0.jpg"
+        ];
+        const MARGIN = 20, IMAGEWIDTH = 300;
+        
+        function renderLists() {
+            let waterfall = document.querySelector(".waterfall");
+
+            for (let index = 0; index < imageSrcData.length; index++) {
+                let img = document.createElement("img");
+                img.src = imageSrcData[index];
+                img.attributes.width = IMAGEWIDTH + "px";
+                waterfall.appendChild(img);
+            }
+        }
+
+        function waterfallContent () {
+            let waterfall = document.querySelector(".waterfall");
+            let waterfallWidth = waterfall.clientWidth;
+            let colColum = parseInt(waterfallWidth / (IMAGEWIDTH + MARGIN));
+            let heightArr = [];
+            let imageList = waterfall.children;
+
+            for (let index = 0; index < imageList.length; index++) {
+                if(index < colColum) {
+                    heightArr.push(imageList[index]["offsetHeight"]);
+                    imageList[index].style.left = (IMAGEWIDTH + MARGIN) * index + "px";
+                    imageList[index].style.top = 0;
+                } else {
+                    let minHeight = heightArr[0];
+                    let minIndex = 0;
+                    
+                    for (let j = 0; j < heightArr.length; j++) {
+                        if(minHeight > heightArr[j]) {
+                            minHeight = heightArr[j];
+                            minIndex = j;
+                        }
+                    }
+                    console.log(minIndex);
+                    imageList[index].style.left = (IMAGEWIDTH + MARGIN) * minIndex + "px"; 
+                    imageList[index].style.top = heightArr[minIndex] + MARGIN + "px";
+                    heightArr[minIndex] = heightArr[minIndex] + imageList[index]["offsetHeight"] + MARGIN;
+                }
+            }
+        }
+
+        renderLists();
+        window.onload = function() {
+            waterfallContent();
+        }
+
+        window.addEventListener("resize", waterfallContent, false)
+    </script>
+</body>
+</html>

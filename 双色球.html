@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>双色球</title>
+    <style>
+        .publicTitle {
+            line-height: 40px;
+            padding: 10px;
+            margin: 10px;
+            box-sizing: border-box;
+        }
+
+        .redBallTitle {
+            color: red;
+        }
+
+        .blueBallTitle {
+            color: red;
+        }
+
+        .publicDiv {
+            display: flex;
+            justify-content: start;
+            flex-wrap: wrap;
+            width: 300px;
+        }
+
+        .publicDiv div {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 20px;
+            margin: 2px;
+            border: 1px solid darkred;
+
+        }
+
+        .blueDiv {
+            background: blue;
+            color: white;
+        }
+
+        .redDiv {
+            background: red;
+            color: white;
+        }
+
+        #controlBtn {
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100px;
+            height: 40px;
+            border: none;
+            box-shadow: red 4px 2px 20px;
+        }
+
+        #wrap
+    </style>
+</head>
+<body>
+<div id="wrap">
+    <h3 class="publicTitle redBallTitle">红球</h3>
+    <div id="redBallWrap" class="publicDiv"></div>
+    <h3 class="publicTitle blueBallTitle">蓝球</h3>
+    <div id="blueBallWrap" class="publicDiv"></div>
+    <div>
+        <button id="controlBtn">开始</button>
+    </div>
+</div>
+</body>
+<script>
+    // 中奖规则 6个红色  1个蓝色
+    // 蓝球外层父元素
+    const blueBallWrap = document.getElementById('blueBallWrap');
+    // 红球外层父元素
+    const redBallWrap = document.getElementById('redBallWrap');
+    const controlBtn = document.getElementById('controlBtn');
+    // 33个蓝球
+    const blueBallChildren = blueBallWrap.children;
+    // 16个红球
+    const redBallChildren = redBallWrap.children;
+    let timer = null;
+    // 按钮开始暂停
+    let btnIsOk = false;
+
+    makeDubBall(32, redBallWrap);
+    makeDubBall(16, blueBallWrap);
+
+    controlBtn.onclick = function () {
+        btnIsOk = !btnIsOk;
+        if (btnIsOk) {
+            controlBtn.innerText = '暂停';
+            timer = setInterval(function () {
+                renderBall();
+            }, 20);
+        } else {
+            controlBtn.innerText = '开始';
+            clearInterval(timer);
+        }
+
+    };
+
+    // 制作双色球
+    function makeDubBall(num, dom) {
+        for (let i = 0; i < num; i++) {
+            let ballDiv = document.createElement('div');
+            ballDiv.innerHTML = (i + 1) < 10 ? ('0' + (i + 1)) : i + 1;
+            dom.appendChild(ballDiv);
+        }
+    }
+
+    // 渲染双色球颜色
+    function renderBall() {
+        const makeRedBallArr = makeRedBall();
+        const makeBlueBallArr = makeBlueBall();
+        // console.log(makeBlueBallArr);
+        // console.log(makeRedBallArr);
+        for (let i = 0; i < redBallChildren.length; i++) {
+            redBallChildren[i].classList.remove('redDiv');
+            for (let j = 0; j < makeRedBallArr.length; j++) {
+                redBallChildren[makeRedBallArr[j] - 1].classList.add('redDiv');
+            }
+        }
+        for (let k = 0; k < blueBallChildren.length; k++) {
+            blueBallChildren[k].classList.remove('blueDiv');
+            blueBallChildren[makeBlueBallArr[0] - 1].classList.add('blueDiv');
+        }
+    }
+
+    // 渲染选中的球
+    function makeRedBall() {
+        let redNum = [];       //  选中的篮球
+        let loopNum = 5;        //  循环的次数，如果数字相同在重新循环一次
+        redNum.push(randNum(1, 32));
+        for (let i = 0; i < loopNum; i++) {
+            let rand = randNum(1, 32);
+            if (redNum.indexOf(rand) === -1) {
+                redNum.push(rand);
+            } else {
+                loopNum += 1;
+            }
+        }
+        return redNum;
+    }
+
+    function makeBlueBall() {
+        let rand = randNum(1, 16);
+        return [rand];
+    }
+
+    function randNum(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+</script>
+</html>
